@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -10,7 +11,8 @@ SECRET_KEY = os.environ.get(
 
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")
+# Fixed ALLOWED_HOSTS parsing with stripping whitespace
+ALLOWED_HOSTS = [s.strip() for s in os.environ.get("ALLOWED_HOSTS", "*").split(",")]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -53,12 +55,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "backend.wsgi.application"
 
+# Production-ready DATABASES with fallback to SQLite for local dev
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    "default": dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 }
+
+# Production security settings
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = os.environ.get("DEBUG") != "True"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -80,10 +88,16 @@ TIME_ZONE = "Asia/Kolkata"
 USE_I18N = True
 USE_TZ = True
 
+# Static files (CSS, JavaScript, Images)
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "travel" / "static"]
 
+# Whitenoise production settings
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+WHITENOISE_USE_FINDERS = True
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Render-specific settings
+ALLOWED_HOSTS = ['*'] if DEBUG else ALLOWED_HOSTS  # Fallback for local dev
