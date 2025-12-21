@@ -1,0 +1,21 @@
+{% extends 'travel/base.html' %}
+{% block title %}Post Ride - VTravelBuddy{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card border-0 shadow">
+            <div class="card-body p-5">
+                <h2 class="text-dark mb-4"><i class="fas fa-plus-circle me-2"></i>Post New Ride</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'my_rides' %}" class="btn btn-secondary me-md-2">Cancel</a>
+                        <button type="submit" class="btn btn-success">Post Ride</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

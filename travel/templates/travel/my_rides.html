@@ -1,0 +1,96 @@
+{% extends 'travel/base.html' %}
+{% block title %}My Rides - VTravelBuddy{% endblock %}
+{% block content %}
+
+<!-- HEADER WITH POST BUTTON -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-white"><i class="fas fa-car me-2"></i>My Posted Rides</h2>
+    <a href="{% url 'post_ride' %}" class="btn btn-success btn-lg">
+        <i class="fas fa-plus me-1"></i>Post New Ride
+    </a>
+</div>
+
+<!-- RIDES WITH BOOKING COUNTS + CHAT -->
+{% if rides %}
+<div class="row">
+    {% for ride in rides %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 border-0">
+            <div class="card-body">
+                <!-- DESTINATION -->
+                <h5 class="card-title text-white mb-3">{{ ride.destination.name }}</h5>
+                
+                <!-- LOCATION -->
+                <p class="text-white-50 mb-3">
+                    <i class="fas fa-map-marker-alt me-1"></i>{{ ride.destination.location }}
+                </p>
+                
+                <!-- SEATS & BOOKINGS STATUS -->
+                <div class="mb-4">
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <span class="badge bg-success w-100 text-start py-2">
+                                <i class="fas fa-chair me-1"></i>
+                                {{ ride.seats_available }} seats left
+                            </span>
+                        </div>
+                        <div class="col-6">
+                            <span class="badge bg-info w-100 text-start py-2">
+                                <i class="fas fa-users me-1"></i>
+                                {{ ride.bookings_count }} passengers booked
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- DEPARTURE TIME -->
+                <p class="text-white-50 mb-3">
+                    <i class="fas fa-clock me-1"></i>
+                    {{ ride.departure_time|date:"M d, Y H:i" }}
+                </p>
+                
+                <!-- POSTED TIME -->
+                <p class="text-white-50 mb-3">
+                    Posted: {{ ride.created_at|date:"M d, Y H:i" }}
+                </p>
+                
+                <!-- BOOKING NOTIFICATION -->
+                {% if ride.bookings_count > 0 %}
+                <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+                    <i class="fas fa-bell me-2"></i>
+                    <strong>{{ ride.bookings_count }} passenger(s) booked your ride!</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endif %}
+                
+                <!-- ACTION BUTTONS -->
+                <div class="d-grid gap-2">
+                    {% if ride.bookings_count > 0 %}
+                        <a href="{% url 'ride_chat' ride.id %}" class="btn btn-outline-info">
+                            💬 Chat with {{ ride.bookings_count }} passengers
+                        </a>
+                    {% else %}
+                        <span class="badge bg-secondary w-100 text-center py-2">
+                            No bookings yet
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% else %}
+<!-- NO RIDES POSTED -->
+<div class="text-center py-5">
+    <i class="fas fa-car fa-3x text-white-50 mb-4"></i>
+    <h4 class="text-white mb-3">No rides posted yet!</h4>
+    <p class="text-white-50 mb-4">Post your first ride to start earning from bookings.</p>
+    <a href="{% url 'post_ride' %}" class="btn btn-primary btn-lg">
+        🚙 Post Your First Ride
+    </a>
+</div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'travel/base.html' %}
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h2 class="mb-4 text-white"><i class="fas fa-car me-2"></i>Available Rides</h2>
+        {% for ride in available_rides %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h5 class="card-title text-white">{{ ride.destination.name }}</h5>
+                        <p class="card-text text-white-50">
+                            <i class="fas fa-map-marker-alt me-1"></i>{{ ride.destination.location }} 
+                            | <i class="fas fa-chair me-1"></i>{{ ride.seats_available }} seats 
+                            | <i class="fas fa-clock me-1"></i>{{ ride.departure_time|date:"M d, Y H:i" }}
+                        </p>
+                    </div>
+                    <a href="{% url 'rides_list' %}" class="btn btn-outline-light btn-sm">View All →</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-5">
+            <i class="fas fa-road fa-3x text-white-50 mb-4"></i>
+            <h4 class="text-white">No rides available yet!</h4>
+            <p class="text-white-50">Be the first to post a ride or check back later.</p>
+            {% if user.is_authenticated %}
+                <a href="{% url 'post_ride' %}" class="btn btn-primary btn-lg">🚙 Post First Ride</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-primary btn-lg">Login to Post</a>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    <div class="col-md-4">
+        <h3 class="text-white mb-4"><i class="fas fa-map-marked-alt me-2"></i>Destinations</h3>
+        {% for dest in destinations %}
+        <div class="card mb-3 border-0">
+            <div class="card-body p-3">
+                <h6 class="text-white mb-1">{{ dest.name }}</h6>
+                <small class="text-white-50">{{ dest.location }}</small>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-4">
+            <p class="text-white-50">No destinations yet. <a href="/admin/" class="text-primary">Add in Admin</a></p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

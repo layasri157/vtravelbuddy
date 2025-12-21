@@ -1,0 +1,132 @@
+{% extends 'travel/base.html' %}
+{% block title %}Find Rides - VTravelBuddy{% endblock %}
+{% block content %}
+
+<!-- 🔍 SEARCH + FILTERS BAR -->
+<div class="card mb-4 border-0 backdrop-blur">
+    <div class="card-body p-4">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-5">
+                <label class="form-label text-white-50 mb-2">Search Rides</label>
+                <input type="text" name="q" class="form-control" placeholder="🔍 Bhopal, Station, Airport..." 
+                       value="{{ query|default:'' }}" autocomplete="off">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label text-white-50 mb-2">Destination</label>
+                <select name="destination" class="form-control">
+                    <option value="">All Destinations</option>
+                    {% for dest in destinations %}
+                        <option value="{{ dest.name }}" {% if destination == dest.name %}selected{% endif %}>
+                            {{ dest.name }} ({{ dest.location }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label text-white-50 mb-2">Min Seats</label>
+                <select name="min_seats" class="form-control">
+                    <option value="">Any</option>
+                    <option value="1" {% if min_seats == '1' %}selected{% endif %}>1+</option>
+                    <option value="2" {% if min_seats == '2' %}selected{% endif %}>2+</option>
+                    <option value="4" {% if min_seats == '4' %}selected{% endif %}>4+</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100 py-2">
+                    <i class="fas fa-search me-1"></i>Filter
+                </button>
+            </div>
+        </form>
+        {% if query or destination or min_seats %}
+        <div class="mt-3 p-2 bg-light bg-opacity-10 rounded">
+            <small class="text-white-50">
+                Filters: 
+                {% if query %}<strong>"{{ query }}"</strong> {% endif %}
+                {% if destination %}{{ destination }} {% endif %}
+                {% if min_seats %}{{ min_seats }}+ seats {% endif %}
+                <a href="{% url 'rides_list' %}" class="text-primary">Clear all</a>
+            </small>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- HEADER -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-white">
+        <i class="fas fa-list me-2"></i>
+        {% if rides %}
+            {{ rides|length }} Available Rides
+        {% else %}
+            No Matching Rides
+        {% endif %}
+    </h2>
+    {% if user.is_authenticated %}
+        <a href="{% url 'post_ride' %}" class="btn btn-success btn-lg">
+            <i class="fas fa-plus me-1"></i>Post Ride
+        </a>
+    {% endif %}
+</div>
+
+<!-- RIDES GRID WITH BOOKING COUNTS -->
+{% if rides %}
+<div class="row">
+    {% for ride in rides %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 border-0">
+            <div class="card-body">
+                <h5 class="card-title text-white">{{ ride.destination.name }}</h5>
+                <p class="text-white-50 mb-2">
+                    <i class="fas fa-map-marker-alt me-1"></i>{{ ride.destination.location }}
+                </p>
+                <div class="mb-3">
+                    <span class="badge bg-success me-2">
+                        <i class="fas fa-chair me-1"></i>{{ ride.seats_available }} seats left
+                    </span>
+                    <span class="badge bg-info">
+                        <i class="fas fa-users me-1"></i>{{ ride.bookings_count }} booked
+                    </span>
+                </div>
+                <p class="text-white-50 mb-3">
+                    <i class="fas fa-clock me-1"></i>{{ ride.departure_time|date:"M d, Y H:i" }}
+                </p>
+                <p class="text-white-50 mb-3">
+                    Posted by: <strong>{{ ride.user.username }}</strong>
+                </p>
+                <div class="d-grid">
+                    {% if user.is_authenticated %}
+                        {% if ride.user != user %}
+                            <a href="{% url 'book_ride' ride.id %}" class="btn btn-primary">
+                                🚀 Book Now (₹{{ ride.destination.price }})
+                            </a>
+                        {% else %}
+                            <span class="badge bg-secondary w-100 text-center py-2">Your Ride</span>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-outline-light">
+                            👤 Login to Book
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% else %}
+<!-- NO RESULTS -->
+<div class="text-center py-5">
+    <i class="fas fa-search fa-3x text-white-50 mb-4"></i>
+    <h4 class="text-white mb-3">No rides match your search</h4>
+    <p class="text-white-50 mb-4">Try adjusting your filters or post your own ride!</p>
+    <div class="d-grid d-md-flex gap-2 justify-content-md-center">
+        <a href="{% url 'rides_list' %}" class="btn btn-outline-light">Clear Filters</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'post_ride' %}" class="btn btn-primary">🚙 Post Ride</a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

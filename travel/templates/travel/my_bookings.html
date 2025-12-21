@@ -1,0 +1,77 @@
+{% extends 'travel/base.html' %}
+{% block title %}My Bookings - VTravelBuddy{% endblock %}
+{% block content %}
+
+<!-- HEADER -->
+<h2 class="text-white mb-4"><i class="fas fa-ticket-alt me-2"></i>My Bookings</h2>
+
+{% if bookings %}
+<div class="row">
+    {% for booking in bookings %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 border-0">
+            <div class="card-body">
+                <!-- RIDE DESTINATION -->
+                <h5 class="card-title text-white">{{ booking.ride.destination.name }}</h5>
+                
+                <!-- LOCATION -->
+                <p class="text-white-50 mb-2">
+                    <i class="fas fa-map-marker-alt me-1"></i>{{ booking.ride.destination.location }}
+                </p>
+                
+                <!-- SEATS STATUS -->
+                <div class="mb-3">
+                    <span class="badge bg-success me-2">
+                        <i class="fas fa-chair me-1"></i>{{ booking.ride.seats_available }} seats left
+                    </span>
+                    <span class="badge bg-info">
+                        <i class="fas fa-users me-1"></i>{{ booking.ride.bookings_count }} total booked
+                    </span>
+                </div>
+                
+                <!-- DEPARTURE TIME -->
+                <p class="text-white-50 mb-3">
+                    <i class="fas fa-clock me-1"></i>{{ booking.ride.departure_time|date:"M d, Y H:i" }}
+                </p>
+                
+                <!-- BOOKING TIME -->
+                <p class="text-white-50 mb-3">
+                    Booked: {{ booking.booking_time|date:"M d, Y H:i" }}
+                </p>
+                
+                <!-- PRICE -->
+                <h5 class="text-primary mb-4">₹{{ booking.ride.destination.price }}</h5>
+                
+                <!-- ACTION BUTTONS -->
+                <div class="d-grid gap-2">
+                    <a href="{% url 'ride_chat' booking.ride.id %}" class="btn btn-outline-info">
+                        <i class="fas fa-comments me-1"></i>💬 Chat with Driver
+                    </a>
+                    <a href="{% url 'rides_list' %}" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-list me-1"></i>Find More Rides
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% else %}
+<!-- NO BOOKINGS -->
+<div class="text-center py-5">
+    <i class="fas fa-ticket-alt fa-3x text-white-50 mb-4"></i>
+    <h4 class="text-white mb-3">No bookings yet!</h4>
+    <p class="text-white-50 mb-4">Book your first ride to start your journey.</p>
+    <div class="d-grid d-md-flex gap-2 justify-content-center">
+        <a href="{% url 'rides_list' %}" class="btn btn-primary btn-lg">
+            🚗 Find Rides
+        </a>
+        <a href="{% url 'post_ride' %}" class="btn btn-outline-light btn-lg">
+            🚙 Post Ride
+        </a>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
