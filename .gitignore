@@ -1,20 +1,14 @@
 # Django
-*.log
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
 db.sqlite3
 media/
 
-# Environment
-venv/
-env/
-.env
-
-# IDE
+# VS Code
 .vscode/
-.idea/
-
-# Python
-__pycache__/
-*.pyc
-
-# Deployment
-staticfiles/
+.DS_Store
