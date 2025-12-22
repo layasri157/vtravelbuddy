@@ -168,3 +168,11 @@ REST_FRAMEWORK = {
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/login/'
 LOGIN_URL = '/login/'
+
+if 'DJANGO_SUPERUSER_PASSWORD' in os.environ:
+    from django.contrib.auth.models import User
+    from django.db.models import signals
+    def create_superuser():
+        if not User.objects.filter(username='admin').exists():
+            User.objects.create_superuser('admin', 'admin@vtravelbuddy.com', os.environ['DJANGO_SUPERUSER_PASSWORD'])
+    signals.post_migrate.connect(create_superuser, sender='travel')
