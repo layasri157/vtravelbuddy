@@ -16,6 +16,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'travel',
     'whitenoise.runserver_nostatic',
 ]
@@ -23,6 +24,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -51,19 +53,34 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-# 🚨 DATABASE FIX - Works for LOCAL + RAILWAY
+# Database (SQLite local, Postgres Railway)
 DATABASES = {
     'default': dj_database_url.parse(
         os.getenv('DATABASE_URL', f"sqlite:///{BASE_DIR}/db.sqlite3")
     )
 }
 
-# Static files
+# Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [BASE_DIR / 'travel' / 'static']
+STATICFILES_DIRS = [
+    BASE_DIR / 'travel' / 'static',
+]
 
+# Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# CORS + CSRF for production
+CORS_ALLOW_ALL_ORIGINS = True
+CSRF_TRUSTED_ORIGINS = [
+    'https://vtravelbuddy-production.up.railway.app',
+    'https://*.railway.app',
+]
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Security (production)
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
