@@ -1,6 +1,9 @@
 import os
 from pathlib import Path
 import dj_database_url
+DATABASES = {
+    'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+}
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
