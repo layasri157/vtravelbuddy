@@ -1,4 +1,4 @@
-# backend/settings.py - COMPLETE PRODUCTION READY FOR RAILWAY
+# backend/settings.py - COMPLETE PRODUCTION READY FOR RAILWAY (FINAL VERSION)
 import os
 from pathlib import Path
 import dj_database_url
@@ -124,16 +124,23 @@ CSRF_COOKIE_SECURE = not DEBUG
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
 
-# CSRF - RAILWAY SPECIFIC (CRITICAL FIX)
+# CSRF - RAILWAY SPECIFIC (NUCLEAR FIX)
 CSRF_TRUSTED_ORIGINS = [
     'https://vtravelbuddy-production.up.railway.app',
-    'https://vtravelbuddy-production.up.railway.app.',
-    'https://*.up.railway.app',
+    'https://vtravelbuddy-production.up.railway.app',  # Duplicate
+    'http://vtravelbuddy-production.up.railway.app',
     'https://*.railway.app',
+    'http://*.railway.app',
+    'https://*.up.railway.app',
+    'http://*.up.railway.app',
 ]
 
-# CORS - For API calls (if using frontend)
-CORS_ALLOW_ALL_ORIGINS = True  # TEMP for Railway - change later
+# COOKIE DOMAIN FIX (CRITICAL)
+CSRF_COOKIE_DOMAIN = '.up.railway.app'
+SESSION_COOKIE_DOMAIN = '.up.railway.app'
+
+# CORS - TEMP FOR RAILWAY
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     'https://vtravelbuddy-production.up.railway.app',
