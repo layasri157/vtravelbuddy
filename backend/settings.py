@@ -1,24 +1,37 @@
-# backend/settings.py - Universal deployment + local ready
+# backend/settings.py - COMPLETE Render-Ready Version (2025)
 
 import os
 import dj_database_url
 from pathlib import Path
 from django.core.management.utils import get_random_secret_key
+import socket
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
+# SECURITY: Production-ready secret key
 SECRET_KEY = os.environ.get('SECRET_KEY', get_random_secret_key())
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+# DEBUG: False in production
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-# Toggle between local/production
-IS_PRODUCTION = os.environ.get('ENVIRONMENT') == 'production'
+# PRODUCTION DETECTION: Render + any cloud platform
+IS_PRODUCTION = (
+    'RENDER' in os.environ or
+    os.environ.get('ENVIRONMENT') == 'production' or
+    os.environ.get('DATABASE_URL') or
+    not DEBUG
+)
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+# BULLETPROOF ALLOWED_HOSTS - Works everywhere
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
+
 if IS_PRODUCTION:
-    ALLOWED_HOSTS += ['.herokuapp.com', '*.railway.app', '*.vercel.app', '*.render.com']
+    ALLOWED_HOSTS += [
+        'vtravelbuddy.onrender.com',
+        '.onrender.com',
+        '.render.com',
+        '*'
+    ]
 
 # Application definition
 INSTALLED_APPS = [
@@ -29,12 +42,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'travel',  # Your app
+    'travel',  # Your ride-sharing app
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Must be first
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Static files - must be early
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -63,10 +76,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-# Universal Database (SQLite local + Postgres production)
-if IS_PRODUCTION or os.environ.get('DATABASE_URL'):
+# UNIVERSAL DATABASE: SQLite local + Postgres production
+DATABASE_URL = os.environ.get('DATABASE_URL', '')
+
+if IS_PRODUCTION and DATABASE_URL:
     DATABASES = {
-        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+        'default': dj_database_url.parse(DATABASE_URL)
     }
 else:
     DATABASES = {
@@ -78,23 +93,15 @@ else:
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'  # IST for your location
 USE_I18N = True
 USE_TZ = True
 
@@ -103,6 +110,9 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
+if IS_PRODUCTION:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -110,13 +120,19 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Production security
+# PRODUCTION SECURITY (Render/Heroku ready)
 if IS_PRODUCTION:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    SECURE_SSL_REDIRECT = True  # Changed to True for Render/Heroku
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_BROWSER_XSS_FILTER = True
-    X_FRAME_OPTIONS = 'DENY'
+
+# LOGIN SETTINGS
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
