@@ -1,4 +1,6 @@
 🚗 VTravelBuddy - Full-Stack Ride Sharing App
+[![Django](https://github.com/layasri157/vtravelbuddy/actions/workflows/ci.yml/badge.svg)](https://github.com/layasri157/vtravelbuddy/actions)
+
 [![Django](https://img.shields.io/badge/Django-4.2-blue![TailwindCSS](https://img.shields.io/badge/TailwindCSS-![Python](https://img.shields.io/badge/Python-3.11-yellowLive Demo: https://your-vtravelbuddy.herokuapp.com (Update after deployment)
 
 ## ✨ **Live Demo** 
