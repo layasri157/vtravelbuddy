@@ -1,13 +1,12 @@
+# backend/settings.py - COMPLETE LOCAL + RAILWAY PERFECT
+
 import os
 from pathlib import Path
 import dj_database_url
-DATABASES = {
-    'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
-}
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-change-in-production')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-change-in-production-2025')
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ['*']
@@ -31,6 +30,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -55,10 +55,12 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 # DATABASES - LOCAL SQLite + RAILWAY Postgres
 if os.environ.get('DATABASE_URL'):
+    # Railway production - Postgres
     DATABASES = {
-        'default': dj_database_url.parse(os.environ['DATABASE_URL'])
+        'default': dj_database_url.parse(os.environ['DATABASE_URL'], conn_max_age=600)
     }
 else:
+    #Local development - SQLite
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -78,9 +80,12 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 CSRF_TRUSTED_ORIGINS = [
     'https://vtravelbuddy-production.up.railway.app',
     'https://*.up.railway.app',
+    'http://localhost:8000',
 ]
 
 LOGIN_URL = '/login/'
