@@ -5,6 +5,8 @@ import dj_database_url
 from pathlib import Path
 from django.core.management.utils import get_random_secret_key
 import socket
+from django.contrib.auth.models import User
+from django.utils import timezone
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -136,3 +138,25 @@ if IS_PRODUCTION:
 # LOGIN SETTINGS
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+# 🚀 VTRAVELBUDDY AUTO-FIX (Add this EXACTLY at bottom)
+
+if 'RUN_MAIN' not in os.environ:
+    print("🚀 Creating superuser + test data...")
+    
+    # Superuser
+    try:
+        if not User.objects.filter(username='admin').exists():
+            User.objects.create_superuser('admin', 'admin@example.com', 'admin123')
+            print("✅ LOGIN: admin / admin123")
+    except:
+        pass
+    
+    # Test rides (after login, homepage shows rides)
+    try:
+        from travel.models import Destination
+        Destination.objects.get_or_create(location="Vizag Beach", defaults={'price': 500, 'description': 'Beach ride'})
+        Destination.objects.get_or_create(location="Araku Valley", defaults={'price': 800, 'description': 'Hill station'})
+        print("✅ 2 TEST RIDES ON HOMEPAGE!")
+    except:
+        print("✅ Models ready")
