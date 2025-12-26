@@ -21,7 +21,12 @@
 - 🔎 Find ride  
 - 🛠️ Admin panel  
 - 🚗 Post ride  
-- 💬 Chat option  
+- 💬 Chat option
+- ![Home page](https://github.com/user-attachments/assets/0854f3cf-2937-4580-b3a0-411fcd931e7b)
+![Find ride](https://github.com/user-attachments/assets/831934a3-e068-48ae-b545-fdaba380c365)
+![Admin Panel](https://github.com/user-attachments/assets/3da417e6-ea5d-4204-a7bd-38faa620b8e5)
+![Post ride](https://github.com/user-attachments/assets/9cb16856-2e52-4c47-9656-846d5f34f4ef)
+![Chat Option](https://github.com/user-attachments/assets/94aafa8a-e6db-4eeb-b4ed-2f6baf76baa1)
 
 > (Keep your existing `![...](...)` image links here.)
 
