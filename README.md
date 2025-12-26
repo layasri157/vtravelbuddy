@@ -17,7 +17,7 @@
 
 ## 📸 Screenshots
 
-- 📱 Mobile homepage  
+- 📱 Mobile & Web UI
 - 🔎 Find ride  
 - 🛠️ Admin panel  
 - 🚗 Post ride  
